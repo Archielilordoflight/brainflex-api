@@ -23,7 +23,7 @@ route.post("/", (req, res) => {
     id: crypto.randomUUID(),
     title: req.query.title,
     channel: "Brainbook",
-    image: "https://i.imgur.com/l2Xfgpl.jpg",
+    image: "http://localhost:8080/static/image2.jpeg",
     description: req.query.description,
     views: "1,001,023",
     likes: "110,985",
@@ -62,6 +62,22 @@ route.post("/", (req, res) => {
   videos.push(newVideo);
   fs.writeFileSync("./data/videos.json", JSON.stringify(videos));
   res.status(201).json("New video uploded");
+});
+
+route.post("/:videoId/comments", (req, res) => {
+  let videos = readData("./data/videos.json");
+  const chosenVideo = videos.find((e) => e.id === req.params.videoId);
+  const i = videos.indexOf(chosenVideo);
+  const newcomment = {
+    id: crypto.randomUUID(),
+    name: "brainBook",
+    comment: req.body,
+    likes: 0,
+    timestamp: Date.now(),
+  };
+  chosenVideo.comments.push(newcomment);
+  videos[i] = chosenVideo;
+  fs.writeFileSync("./data/videos.json", JSON.stringify(videos));
 });
 
 route.delete("/:videoId", (req, res) => {
